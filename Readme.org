@@ -40,6 +40,8 @@ based configuration command.
         (setq projectile-cmake-clang-c++-executable joemacs/config/clang-c++-compiler-runtime-exe)
 )
 
+#+end_src
+
 All *projectile-cmake* commands are mapped to the following key bindings in the =projectile-cmake-command-map=
 which the author has bound to =C-c C-p=
 
@@ -58,8 +60,6 @@ which the author has bound to =C-c C-p=
 |=C-c C-p s r m=|=M-x projectile-cmake-select-run-file-minimal-size-release=   |Choose the minimal size release executable to run for the project, explicitely.|
 |=C-c C-p t d=  |=M-x projectile-cmake-toggle-run-in-build-dir=                |Toggle the flag that determines whether the generic run executable path is used literally or if its filename is used in the current build directory.|
 |---------------+--------------------------------------------------------------+-------------|
-
-#+end_src
 
 * Dependencies
 
