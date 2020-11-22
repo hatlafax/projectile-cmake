@@ -1,0 +1,108 @@
+* projectile-cmake.el
+
+Fine grained support of CMake with projectile.
+
+* Motivation
+
+The following extends the projectile CMake support by the following points:
+- support for multilple tool configurations of a project
+- build directory at a different locations as the project directory
+- storage of all settings in project's .dir-locals.el file
+
+Since this is the very first Emacs elisp package of the author it is to be
+expected that it posses many deficiencies. This is work in progress. You might
+use if it pleases you, but don't blame me for its short commings.
+
+* Installation
+
+This package is not available on MELPA. Just copy it into your load path.
+
+* Usage
+
+The author uses it as follows:
+
+#+begin_src lisp
+
+(use-package projectile-cmake
+    :diminish projectile-cmake-mode
+    :straight nil
+    :bind (
+            :map projectile-cmake-mode-map
+                ("C-c C-p" . projectile-cmake-command-map)
+                ("C-c C-p h" . hydra-projectile-cmake/body)
+          )
+    :hook (projectile-mode . projectile-cmake-global-mode)
+    :init
+        (setq projectile-cmake-executable           joemacs/config/cmake-runtime-exe)
+        (setq projectile-cmake-clang-c-executable   joemacs/config/clang-c-compiler-runtime-exe)
+        (setq projectile-cmake-clang-c++-executable joemacs/config/clang-c++-compiler-runtime-exe)
+)
+
+#+end_src
+
+* Dependencies
+
+The author only tested it with Emacs 27.1.
+ 
+- [[https://github.com/bbatsov/projectile][projectile]]
+- [[https://github.com/magnars/s.el][s]]
+- [[https://github.com/rejeep/f.el][f]]
+- [[https://github.com/magnars/dash.el][dash]]
+- [[https://github.com/abo-abo/swiper][ivy]]
+- [[https://github.com/abo-abo/hydra][hydra]]
+
+* Usage
+
+After entering a CMake/C/C++ project, i.e. a directory that contains a CMakeLists.txt file and or one 
+or more C/C++ files the projectile-cmake extensions can be used. At first the configuration must be
+defined by the interactive commands:
+- =M-x projectile-cmake-select-build-dir=
+- =M-x projectile-cmake-select-build-type=
+- =M-x projectile-cmake-select-generator=
+- =M-x projectile-cmake-select-architecture=
+- =M-x projectile-cmake-select-toolset=
+- =M-x projectile-cmake-select-toolchain=. 
+
+Additionally, the file that should be executed for the project can be defined by commands: 
+- =M-x projectile-cmake-select-run-file= 
+- =M-x projectile-cmake-select-run-file-debug=
+- =M-x projectile-cmake-select-run-file-release=
+- =M-x projectile-cmake-select-run-file-release-with-debug-info= 
+- =M-x projectile-cmake-select-run-file-minimal-size-release=
+
+If the bool variable =projectile-cmake-project-run-in-build-dir= is t the run command takes the filename of the
+path set by =M-x projectile-cmake-select-run-file= and concat it with the current configuration build directory.
+The variable =projectile-cmake-project-run-in-build-dir= can be toggled by the 
+command =M-x projectile-cmake-toggle-run-in-build-dir=.
+
+After that setup, the usual projectile commands like =M-x projectile-project-configure=, etc. can be used.
+
+At last, the package provides a simple hydra =hydra-projectile-cmake=.
+
+** Cautionary Note
+
+This is an Emacs beginners package and not tested thoroughly. The author does not regard this
+package on par with typical Melpa packages.
+
+* Limitations / Known Issues
+
+- Extensions for better CMake command line control are still missing. For instance extra flags for
+  the various build types.
+- The package has only be used on the authors Windows platform.
+
+* License (GPL v3)
+
+Copyright (C) 2016 Free Software Foundation, Inc.
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
