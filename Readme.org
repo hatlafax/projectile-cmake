@@ -45,20 +45,20 @@ based configuration command.
 All *projectile-cmake* commands are mapped to the following key bindings in the =projectile-cmake-command-map=
 which the author has bound to =C-c C-p=. E.g. the first command can be started by =C-c C-p s d=
 
-| key binding   | command                                                      | description |
-|---------------+--------------------------------------------------------------+-------------|
-|=s d=  |=M-x projectile-cmake-select-build-dir=                       |Choose the build directory root for the project.|
-|=s t=  |=M-x projectile-cmake-select-build-type=                      |Choose between *Debug*, *Release*, *RelWithDebInfo* and *MinSizeRel*.|
-|=s g=  |=M-x projectile-cmake-select-generator=                       |Choose a valid CMake generator: *MinGW Makefiles*, *Ninja*, *Visual Studio 16 2019*, ...|
-|=s a=  |=M-x projectile-cmake-select-architecture=                    |Choose between *Win32*, *x64*, *ARM* and *ARM64*.|
-|=s s=  |=M-x projectile-cmake-select-toolset=                         |Only used for *Visual Studio* generators: e.g. *v142* or *v142_clang_c2*|
-|=s c=  |=M-x projectile-cmake-select-toolchain=                       |Choose between *gcc*, *clang* or *vs*.|
-|=s r g=|=M-x projectile-cmake-select-run-file=                        |Choose the executable to run for the project.|
-|=s r d=|=M-x projectile-cmake-select-run-file-debug=                  |Choose the debug executable to run for the project, explicitely.|
-|=s r r=|=M-x projectile-cmake-select-run-file-release=                |Choose the release executable to run for the project, explicitely.|
-|=s r i=|=M-x projectile-cmake-select-run-file-release-with-debug-info=|Choose the release with debug information executable to run for the project, explicitely.|
-|=s r m=|=M-x projectile-cmake-select-run-file-minimal-size-release=   |Choose the minimal size release executable to run for the project, explicitely.|
-|=t d=  |=M-x projectile-cmake-toggle-run-in-build-dir=                |Toggle the flag that determines whether the generic run executable path is used literally or if its filename is used in the current build directory.|
+| key binding | command                                                    | description |
+|-------------+------------------------------------------------------------+-------------|
+|C-c C-p s d  |M-x projectile-cmake-select-build-dir                       |Choose the build directory root for the project.|
+|C-c C-p s t  |M-x projectile-cmake-select-build-type                      |Choose between *Debug*, *Release*, *RelWithDebInfo* and *MinSizeRel*.|
+|C-c C-p s g  |M-x projectile-cmake-select-generator                       |Choose a valid CMake generator: *MinGW Makefiles*, *Ninja*, *Visual Studio 16 2019*, ...|
+|C-c C-p s a  |M-x projectile-cmake-select-architecture                    |Choose between *Win32*, *x64*, *ARM* and *ARM64*.|
+|C-c C-p s s  |M-x projectile-cmake-select-toolset                         |Only used for *Visual Studio* generators: e.g. *v142* or *v142_clang_c2*|
+|C-c C-p s c  |M-x projectile-cmake-select-toolchain                       |Choose between *gcc*, *clang* or *vs*.|
+|C-c C-p s r g|M-x projectile-cmake-select-run-file                        |Choose the executable to run for the project.|
+|C-c C-p s r d|M-x projectile-cmake-select-run-file-debug                  |Choose the debug executable to run for the project, explicitely.|
+|C-c C-p s r r|M-x projectile-cmake-select-run-file-release                |Choose the release executable to run for the project, explicitely.|
+|C-c C-p s r i|M-x projectile-cmake-select-run-file-release-with-debug-info|Choose the release with debug information executable to run for the project, explicitely.|
+|C-c C-p s r m|M-x projectile-cmake-select-run-file-minimal-size-release   |Choose the minimal size release executable to run for the project, explicitely.|
+|C-c C-p t d  |M-x projectile-cmake-toggle-run-in-build-dir                |Toggle the flag that determines whether the generic run executable path is used literally or if its filename is used in the current build directory.|
 |---------------+--------------------------------------------------------------+-------------|
 
 * Dependencies
