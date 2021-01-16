@@ -9,6 +9,7 @@ The following extends the Emacs projectile CMake support by the following points
 - build directory at a different locations as the project directory
 - build directory contains compiler and build-type sub pathes
 - storage of all settings in project's .dir-locals.el file
+- evaluates JSON '.projectile-cmake' file for extra configuration flags
 
 Since this is the very first Emacs elisp package of the author, it is to be
 expected that it contains many deficiencies. This is work in progress. You might
@@ -16,11 +17,11 @@ use the package if it pleases you, but don't blame me for its short commings :-)
 
 * Installation
 
-This package is not available on MELPA. Just copy file =projectile.ex= into your load path.
+This package is not available on MELPA. Just copy file =projectile.el= into your load path.
 
 * Usage
 
-The author uses it with the following [[https://github.com/raxod502/straight.el][straight]] 
+The author uses it with the following [[https://github.com/raxod502/straight.el][straight]]
 based configuration command.
 
 #+begin_src lisp
@@ -31,7 +32,8 @@ based configuration command.
     :bind (
             :map projectile-cmake-mode-map
                 ("C-c C-p" . projectile-cmake-command-map)
-                ("C-c C-p h" . hydra-projectile-cmake/body)
+            :map projectile-cmake-command-map
+                ("h" . hydra-projectile-cmake/body)
           )
     :hook (projectile-mode . projectile-cmake-global-mode)
     :init
@@ -45,36 +47,24 @@ based configuration command.
 All *projectile-cmake* commands are mapped to the following key bindings in the =projectile-cmake-command-map=
 which the author has bound to =C-c C-p=. E.g. the first command can be started by =C-c C-p s d=.
 
-| key binding | command                                        | description |
-|-------------+------------------------------------------------+-------------|
-|s d  |projectile-cmake-select-build-dir                       |Choose the build directory root for the project.|
-|s t  |projectile-cmake-select-build-type                      |Choose between *Debug*, *Release*, *RelWithDebInfo* and *MinSizeRel*.|
-|s g  |projectile-cmake-select-generator                       |Choose a valid CMake generator: *MinGW Makefiles*, *Ninja*, *Visual Studio 16 2019*, ...|
-|s a  |projectile-cmake-select-architecture                    |Choose between *Win32*, *x64*, *ARM* and *ARM64*.|
-|s s  |projectile-cmake-select-toolset                         |Only used for *Visual Studio* generators: e.g. *v142* or *v142_clang_c2*|
-|s c  |projectile-cmake-select-toolchain                       |Choose between *gcc*, *clang* or *vs*.|
-|s r g|projectile-cmake-select-run-file                        |Choose the executable to run for the project.|
-|s r d|projectile-cmake-select-run-file-debug                  |Choose the debug executable to run for the project, explicitely.|
-|s r r|projectile-cmake-select-run-file-release                |Choose the release executable to run for the project, explicitely.|
-|s r i|projectile-cmake-select-run-file-release-with-debug-info|Choose the release with debug information executable to run for the project, explicitely.|
-|s r m|projectile-cmake-select-run-file-minimal-size-release   |Choose the minimal size release executable to run for the project, explicitely.|
-|t d  |projectile-cmake-toggle-run-in-build-dir                |Toggle the flag that determines whether the generic run executable path is used literally or if its filename is used in the current build directory.|
-|--------------+-----------------------------------------------+-------------|
+| key binding | command                                                  | description                                                                                                                                          |
+|-------------+----------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------|
+| s d         | projectile-cmake-select-build-dir                        | Choose the build directory root for the project.                                                                                                     |
+| s t         | projectile-cmake-select-build-type                       | Choose between *Debug*, *Release*, *RelWithDebInfo* and *MinSizeRel*.                                                                                |
+| s g         | projectile-cmake-select-generator                        | Choose a valid CMake generator: *MinGW Makefiles*, *Ninja*, *Visual Studio 16 2019*, ...                                                             |
+| s a         | projectile-cmake-select-architecture                     | Choose between *Win32*, *x64*, *ARM* and *ARM64*.                                                                                                    |
+| s s         | projectile-cmake-select-toolset                          | Only used for *Visual Studio* generators: e.g. *v142* or *v142_clang_c2*                                                                             |
+| s c         | projectile-cmake-select-toolchain                        | Choose between *gcc*, *clang* or *vs*.                                                                                                               |
+| s r g       | projectile-cmake-select-run-file                         | Choose the executable to run for the project.                                                                                                        |
+| s r d       | projectile-cmake-select-run-file-debug                   | Choose the debug executable to run for the project, explicitely.                                                                                     |
+| s r r       | projectile-cmake-select-run-file-release                 | Choose the release executable to run for the project, explicitely.                                                                                   |
+| s r i       | projectile-cmake-select-run-file-release-with-debug-info | Choose the release with debug information executable to run for the project, explicitely.                                                            |
+| s r m       | projectile-cmake-select-run-file-minimal-size-release    | Choose the minimal size release executable to run for the project, explicitely.                                                                      |
+| t d         | projectile-cmake-toggle-run-in-build-dir                 | Toggle the flag that determines whether the generic run executable path is used literally or if its filename is used in the current build directory. |
+| e r         | projectile-cmake-reinitialize                            | Reinitializes project. Necessary if =.projectile-cmake= JSON file was added or modified                                                              |
+|-------------+----------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------|
 
-* Dependencies
-
-The author only tested it with Emacs 27.1.
- 
-- [[https://github.com/bbatsov/projectile][projectile]]
-- [[https://github.com/magnars/s.el][s]]
-- [[https://github.com/rejeep/f.el][f]]
-- [[https://github.com/magnars/dash.el][dash]]
-- [[https://github.com/abo-abo/swiper][ivy]]
-- [[https://github.com/abo-abo/hydra][hydra]]
-
-* Usage
-
-After entering a CMake/C/C++ project, i.e. a directory that contains a CMakeLists.txt file and one 
+After entering a CMake/C/C++ project, i.e. a directory that contains a CMakeLists.txt file and one
 or more C/C++ files, the *projectile-cmake* extensions can be used. At first the configuration must be
 prepared by using of the following interactive commands. The information is then stored in the .dir-locals.el
 file.
@@ -83,13 +73,13 @@ file.
 - =M-x projectile-cmake-select-generator=
 - =M-x projectile-cmake-select-architecture=
 - =M-x projectile-cmake-select-toolset=
-- =M-x projectile-cmake-select-toolchain=. 
+- =M-x projectile-cmake-select-toolchain=.
 
-Additionally, a file that should be executed for the project can be defined by the following commands: 
-- =M-x projectile-cmake-select-run-file= 
+Additionally, a file that should be executed for the project can be defined by the following commands:
+- =M-x projectile-cmake-select-run-file=
 - =M-x projectile-cmake-select-run-file-debug=
 - =M-x projectile-cmake-select-run-file-release=
-- =M-x projectile-cmake-select-run-file-release-with-debug-info= 
+- =M-x projectile-cmake-select-run-file-release-with-debug-info=
 - =M-x projectile-cmake-select-run-file-minimal-size-release=
 
 If the bool variable =projectile-cmake-project-run-in-build-dir= is set to *t*, the run command takes only the filename of the
@@ -98,12 +88,48 @@ The variable =projectile-cmake-project-run-in-build-dir= can be toggled by the c
 
 After this preparation, the usual *projectile* project commands like =M-x projectile-project-configure=, etc. can be used.
 
+After changing or adding a '.projectile-cmake' JSON file in the project root directory command
+=projectile-cmake-reinitialize= should be called in order to evaluate the configuration.
+
 Finally, the package provides a simple hydra =hydra-projectile-cmake=.
+
+** File .projectile-cmake
+
+The user can add a JSON file with the fixed name =.projectile-cmake= to the root of a projectile project.
+This file should have the following examplified  layout:
+
+#+begin_src json
+{
+    "configure-flags": [
+        "-D test1",
+        "-D test2",
+        "-D test3 -D test4",
+        "--test5 test6"
+    ]
+}
+
+#+end_src
+
+Only the key =configure-flags= is currently taken into account. The value if this key is a list of string entries.
+These entries are all concatenated with a separating space character and finally added to the CMake configuration
+command line. Command =projectile-cmake-reinitialize= is probably to be called after adding or changing the file
+=.projectile-cmake=.
 
 ** Cautionary Note
 
 This is an Emacs beginners package and it is not tested thoroughly. The author does not regard this
 package on par with typical Melpa packages.
+
+* Dependencies
+
+The author only tested it with Emacs 27.1.
+
+- [[https://github.com/bbatsov/projectile][projectile]]
+- [[https://github.com/magnars/s.el][s]]
+- [[https://github.com/rejeep/f.el][f]]
+- [[https://github.com/magnars/dash.el][dash]]
+- [[https://github.com/abo-abo/swiper][ivy]]
+- [[https://github.com/abo-abo/hydra][hydra]]
 
 * Limitations / Known Issues
 

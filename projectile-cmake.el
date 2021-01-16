@@ -42,6 +42,7 @@
 (require 'f)
 (require 'ivy)
 (require 'hydra)
+(require 'json)
 
 (defgroup projectile-cmake nil
   "CMake mode based on projectile"
@@ -64,6 +65,11 @@ When any of the files are found it means that this is a cmake app."
 
 (defcustom projectile-cmake-executable "cmake"
   "The CMake executable."
+  :group 'projectile-cmake
+  :type 'string)
+
+(defcustom projectile-emcmake-executable "emcmake"
+  "The emcmake executable."
   :group 'projectile-cmake
   :type 'string)
 
@@ -96,7 +102,13 @@ The following build types are supported: Release, Debug, RelWithDebInfo and  Min
 
 (defcustom projectile-cmake-default-toolchain "gcc"
   "The default CMake toolchain.
-The following toolchains are supported: gcc, clang and vs"
+The following toolchains are supported: gcc, clang, emcc and vs
+
+gcc   : Gnu C/C++ compiler
+clang : Clang C/C++ compiler
+emcc  : Emscripten C/C++ to WASM/JS cross compiler
+vs    : MS Visual Studio C++ compiler
+"
   :group 'projectile-cmake
   :type 'string)
 
@@ -359,6 +371,52 @@ The user will be prompted to choose a directory starting with `directory-to-star
 The user will be prompted to choose a executable file starting with `directory-to-start-in'"
   (expand-file-name (read-file-name "Enter file name:" directory-to-start-in)))
 
+
+(defun projectile-cmake-read-json-file ()
+    "Read and evaluate a '.projectile-cmake' file in the project root directory.
+
+The file .projectile-cmake is expected to be written in valid JSON format.
+
+The following keys are evaluated:
+    \"configure-flags\" : all flags listed in the array value associated to this key are
+                          concatenated and then added to the configure command line.
+
+Example:
+    {
+        \"configure-flags\": [
+            \"-D test1\",
+            \"-D test2\",
+            \"-D test3 -D test4\",
+            \"--target test5\"
+        ]
+    }
+"
+    (let ((configure-flags ""))
+        (when (projectile-project-p)
+            (projectile-with-default-dir
+                (if (projectile-project-p)
+                    (projectile-project-root) default-directory)
+
+                (let* ((file (concat (projectile-project-root) ".projectile-cmake")))
+                    (when (file-exists-p file)
+                        (let* ( (json-object-type 'hash-table)
+                                (json-array-type 'list)
+                                (json-key-type 'string)
+                                (json (json-read-file file))
+                                (flags (gethash "configure-flags" json))
+                              )
+                          (dolist (flag flags)
+                            (setq configure-flags (concat configure-flags " " flag)))
+
+                          (s-trim configure-flags)
+                        )
+                    )
+                )
+            )
+        )
+        (list configure-flags)
+    )
+)
 ;;
 ;; Semantic implementation
 ;;
@@ -564,12 +622,14 @@ The user will be prompted to choose a executable file starting with `directory-t
     (let (( value )
           (default-directory (projectile-cmake-project-build-dir))
           (toolchain (projectile-cmake--get-toolchain))
+          (emcmake-exe projectile-emcmake-executable)
           (cmake-exe projectile-cmake-executable)
           (generator (prin1-to-string (projectile-cmake--get-generator)))
           (build-type (projectile-cmake--get-build-type))
           (architecture (projectile-cmake--get-architecture))
           (toolset (projectile-cmake--get-toolset))
           (root (f-full (projectile-project-root)))
+          (json (projectile-cmake-read-json-file))
           )
       (when (equal toolchain "clang")
         (setq value (concat cmake-exe
@@ -577,6 +637,7 @@ The user will be prompted to choose a executable file starting with `directory-t
                             " -DCMAKE_BUILD_TYPE=" build-type
                             " -DCMAKE_C_COMPILER=" projectile-cmake-clang-c-executable
                             " -DCMAKE_CXX_COMPILER=" projectile-cmake-clang-c++-executable
+                            (nth 0 json)
                             " -B " default-directory
                             " -S " root
                             )))
@@ -585,15 +646,30 @@ The user will be prompted to choose a executable file starting with `directory-t
         (setq value (concat cmake-exe
                             " -G " generator
                             " -DCMAKE_BUILD_TYPE=" build-type
+                            (nth 0 json)
                             " -B " default-directory
                             " -S " root
                         )))
+
+    ;;
+    ;; ToDo emcc
+    ;;
+      (when (equal toolchain "emcc")
+        (setq value (concat emcmake-exe
+                            cmake-exe
+                            " -G " generator
+                            " -DCMAKE_BUILD_TYPE=" build-type
+                            (nth 0 json)
+                            " -B " default-directory
+                            " -S " root
+                            )))
 
       (when (equal toolchain "vs")
         (setq value (concat cmake-exe
                             " -G " generator
                             " -A " architecture
                             " -T " toolset
+                            (nth 0 json)
                             " -B " default-directory
                             " -S " root
                         )))
@@ -627,6 +703,11 @@ The user will be prompted to choose a executable file starting with `directory-t
                             )))
 
       (when (equal toolchain "gcc")
+        (setq value (concat cmake-exe
+                            " --build " default-directory
+                            )))
+
+      (when (equal toolchain "emcc")
         (setq value (concat cmake-exe
                             " --build " default-directory
                             )))
@@ -672,6 +753,12 @@ The user will be prompted to choose a executable file starting with `directory-t
                             " --target install"
                             )))
 
+      (when (equal toolchain "emcc")
+        (setq value (concat cmake-exe
+                            " --build " default-directory
+                            " --target install"
+                            )))
+
       (when (equal toolchain "vs")
         (setq value (concat cmake-exe
                             " --build  " default-directory
@@ -709,6 +796,12 @@ The user will be prompted to choose a executable file starting with `directory-t
                             )))
 
       (when (equal toolchain "gcc")
+        (setq value (concat cmake-exe
+                            " --build " default-directory
+                            " --target package"
+                            )))
+
+      (when (equal toolchain "emcc")
         (setq value (concat cmake-exe
                             " --build " default-directory
                             " --target package"
@@ -891,6 +984,25 @@ The user will be prompted to choose a executable file starting with `directory-t
       (kill-buffer)
       (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory))))
 
+(defun projectile-cmake-reinitialize ()
+  "Reinitializes an already initialized project.
+Normally, this is not necessary. In cases that for instance an '.projectile-cmake'
+JSON file was added or modified, running this command is necessary."
+  (interactive)
+  (when (and
+         (projectile-project-p) ;; detect if current buffer is in a project
+         (or
+          (derived-mode-p 'cmake-mode)
+          (derived-mode-p 'c-mode)
+          (derived-mode-p 'c++-mode)
+          ) ; or
+         ) ; and
+    (setq projectile-cmake-project-initialized nil)
+    (projectile-cmake-initialize)
+    ;(add-dir-local-variable nil 'projectile-cmake-project-initialized nil)
+  )
+)
+
 
 ;;
 ;; Interactive
@@ -904,6 +1016,9 @@ The user will be prompted to choose a executable file starting with `directory-t
       (setq value (f-join value (projectile-cmake--get-toolchain) (projectile-cmake--get-build-type))))
 
     (when (equal (projectile-cmake--get-toolchain) "gcc")
+      (setq value (f-join value (projectile-cmake--get-toolchain) (projectile-cmake--get-build-type))))
+
+    (when (equal (projectile-cmake--get-toolchain) "emcc")
       (setq value (f-join value (projectile-cmake--get-toolchain) (projectile-cmake--get-build-type))))
 
     (when (equal (projectile-cmake--get-toolchain) "vs")
@@ -1062,6 +1177,7 @@ The toolset feature is used only for Visual Studio generators."
                      '(
                        "gcc"
                        "clang"
+                       "emcc"
                        "vs"
                        )
                      (projectile-cmake--get-toolchain))))
@@ -1138,6 +1254,8 @@ If this variable is nil the run executable path is taken verbatim."
     (define-key map (kbd "s r i") #'projectile-cmake-select-run-file-release-with-debug-info)
     (define-key map (kbd "s r m") #'projectile-cmake-select-run-file-minimal-size-release)
     (define-key map (kbd "t d") #'projectile-cmake-toggle-run-in-build-dir)
+    (define-key map (kbd "e r") #'projectile-cmake-reinitialize)
+
     map)
   "Keymap after `projectile-cmake-keymap-prefix'.")
 (fset 'projectile-cmake-command-map projectile-cmake-command-map)
@@ -1202,6 +1320,7 @@ _ss_: select toolset                 | _srm_: select run file release minimal si
 _sc_: select toolchain               |
 ^^-----------------------------------+^^--------------------------------------------
 _td_: toggle: Run in build directory | _q_: quit
+_er_; reinitialize
 "
     ("sd" projectile-cmake-select-build-dir)
     ("st" projectile-cmake-select-build-type)
@@ -1215,6 +1334,7 @@ _td_: toggle: Run in build directory | _q_: quit
     ("sri" projectile-cmake-select-run-file-release-with-debug-info)
     ("srm" projectile-cmake-select-run-file-minimal-size-release)
     ("td" projectile-cmake-toggle-run-in-build-dir)
+    ("er" projectile-cmake-reinitialize)
     ("q" nil :color blue)
     )))
 
