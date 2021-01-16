@@ -655,7 +655,7 @@ Example:
     ;; ToDo emcc
     ;;
       (when (equal toolchain "emcc")
-        (setq value (concat emcmake-exe
+        (setq value (concat emcmake-exe " "
                             cmake-exe
                             " -G " generator
                             " -DCMAKE_BUILD_TYPE=" build-type
