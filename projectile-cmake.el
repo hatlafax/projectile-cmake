@@ -369,7 +369,7 @@ The user will be prompted to choose a directory starting with `directory-to-star
 (defun projectile-cmake-find-file (directory-to-start-in)
   "Return a file choosen by the user.
 The user will be prompted to choose a executable file starting with `directory-to-start-in'"
-  (expand-file-name (read-file-name "Enter file name:" directory-to-start-in)))
+  (expand-file-name (read-file-name "Enter file name: " directory-to-start-in)))
 
 
 (defun projectile-cmake-read-json-file ()
@@ -516,101 +516,94 @@ Example:
 
 (defun projectile-cmake--get-run-generic-cmd()
   "Get generic run command from .dir-locals.el file."
-  (when (eq  projectile-cmake-run-generic-cmd nil)
-    (projectile-cmake--set-run-generic-cmd))
-  projectile-cmake-run-generic-cmd)
-
+  projectile-cmake-project-run-generic-cmd)
 
 (defun projectile-cmake--get-run-debug-cmd()
   "Get debug run command from .dir-locals.el file."
-  (when (eq  projectile-cmake-run-debug-cmd nil)
-    (projectile-cmake--set-run-debug-cmd))
-  projectile-cmake-run-debug-cmd)
-
+  projectile-cmake-project-run-debug-cmd)
 
 (defun projectile-cmake--get-run-release-cmd()
   "Get release run command from .dir-locals.el file."
-  (when (eq  projectile-cmake-run-release-cmd nil)
-    (projectile-cmake--set-run-release-cmd))
-  projectile-cmake-run-release-cmd)
-
+  projectile-cmake-project-run-release-cmd)
 
 (defun projectile-cmake--get-run-release-with-debug-info-cmd()
   "Get release with debug info run command from .dir-locals.el file."
-  (when (eq  projectile-cmake-run-release-with-debug-info-cmd nil)
-    (projectile-cmake--set-run-release-with-debug-info-cmd))
-  projectile-cmake-run-release-with-debug-info-cmd)
-
+  projectile-cmake-project-run-release-with-debug-info-cmd)
 
 (defun projectile-cmake--get-run-minimal-size-release-cmd()
   "Get minimal size release run command from .dir-locals.el file."
-  (when (eq  projectile-cmake-run-minimal-size-release-cmd nil)
-    (projectile-cmake--set-run-minimal-size-release-cmd))
-  projectile-cmake-run-minimal-size-release-cmd)
+  projectile-cmake-project-run-minimal-size-release-cmd)
 
 
 ;; projectile-cmake--set-xxx
 (defun projectile-cmake--set-build-dir (value &optional evaluate)
   "Add build directory variable to .dir-locals.el file."
-  (add-dir-local-variable nil 'projectile-cmake-project-build-dir value)
-  (unless evaluate
-    (save-buffer)
-    (kill-buffer)
-    (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory)))
+  (save-current-buffer
+    (add-dir-local-variable nil 'projectile-cmake-project-build-dir value)
+    (unless evaluate
+        (save-buffer)
+        (kill-buffer)
+        (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory))))
 
 
 (defun projectile-cmake--set-build-type (value &optional evaluate)
   "Add build type variable to .dir-locals.el file."
-  (add-dir-local-variable nil 'projectile-cmake-project-build-type value)
-  (unless evaluate
-    (save-buffer)
-    (kill-buffer)
-    (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory)))
+  (save-current-buffer
+    (add-dir-local-variable nil 'projectile-cmake-project-build-type value)
+    (unless evaluate
+        (save-buffer)
+        (kill-buffer)
+        (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory))))
 
 
 (defun projectile-cmake--set-generator (value &optional evaluate)
   "Add generator variable to .dir-locals.el file."
-  (add-dir-local-variable nil 'projectile-cmake-project-generator value)
-  (unless evaluate
-    (save-buffer)
-    (kill-buffer)
-    (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory)))
+  (save-current-buffer
+    (add-dir-local-variable nil 'projectile-cmake-project-generator value)
+    (unless evaluate
+        (save-buffer)
+        (kill-buffer)
+        (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory))))
 
 
 (defun projectile-cmake--set-architecture (value &optional evaluate)
   "Add architecture variable to .dir-locals.el file."
-  (add-dir-local-variable nil 'projectile-cmake-project-architecture value)
-  (unless evaluate
-    (save-buffer)
-    (kill-buffer)
-    (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory)))
+  (save-current-buffer
+    (add-dir-local-variable nil 'projectile-cmake-project-architecture value)
+    (unless evaluate
+        (save-buffer)
+        (kill-buffer)
+        (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory))))
 
 
 (defun projectile-cmake--set-toolset (value &optional evaluate)
   "Add toolset variable to .dir-locals.el file."
-  (add-dir-local-variable nil 'projectile-cmake-project-toolset value)
-  (unless evaluate
-    (save-buffer)
-    (kill-buffer)
-    (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory)))
+  (save-current-buffer
+    (add-dir-local-variable nil 'projectile-cmake-project-toolset value)
+    (unless evaluate
+        (save-buffer)
+        (kill-buffer)
+        (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory))))
 
 
 (defun projectile-cmake--set-toolchain(value &optional evaluate)
   "Add toolchain variable to .dir-locals.el file."
-  (add-dir-local-variable nil 'projectile-cmake-project-toolchain value)
-  (unless evaluate
-    (save-buffer)
-    (kill-buffer)
-    (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory)))
+  (save-current-buffer
+    (add-dir-local-variable nil 'projectile-cmake-project-toolchain value)
+    (unless evaluate
+        (save-buffer)
+        (kill-buffer)
+        (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory))))
 
 
 (defun projectile-cmake--set-run-in-build-dir(value &optional evaluate)
   "Add run in build directory flag variable to .dir-locals.el file."
-  (add-dir-local-variable nil 'projectile-cmake-project-run-in-build-dir value)
-  (unless evaluate
-    (save-buffer)
-    (kill-buffer)
-    (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory)))
+  (save-current-buffer
+    (add-dir-local-variable nil 'projectile-cmake-project-run-in-build-dir value)
+    (unless evaluate
+        (save-buffer)
+        (kill-buffer)
+        (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory))))
 
 
 (defun projectile-cmake--set-configure-cmd(&optional evaluate)
@@ -674,15 +667,16 @@ Example:
                             " -S " root
                         )))
 
-      (add-dir-local-variable nil 'projectile-project-configure-cmd value)
+      (save-current-buffer
+          (add-dir-local-variable nil 'projectile-project-configure-cmd value)
 
-      (when projectile-configure-cmd-map
-        (puthash default-directory value projectile-configure-cmd-map))
+          (when projectile-configure-cmd-map
+            (puthash default-directory value projectile-configure-cmd-map))
 
-      (unless evaluate
-        (save-buffer)
-        (kill-buffer)
-        (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory)))))
+          (unless evaluate
+            (save-buffer)
+            (kill-buffer)
+            (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory))))))
 
 
 (defun projectile-cmake--set-compilation-cmd(&optional evaluate)
@@ -718,15 +712,16 @@ Example:
                             " --config " build-type
                             )))
 
-      (add-dir-local-variable nil 'projectile-project-compilation-cmd value)
+      (save-current-buffer
+          (add-dir-local-variable nil 'projectile-project-compilation-cmd value)
 
-      (when projectile-compilation-cmd-map
-        (puthash default-directory value projectile-compilation-cmd-map))
+          (when projectile-compilation-cmd-map
+            (puthash default-directory value projectile-compilation-cmd-map))
 
-      (unless evaluate
-        (save-buffer)
-        (kill-buffer)
-        (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory)))))
+          (unless evaluate
+            (save-buffer)
+            (kill-buffer)
+            (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory))))))
 
 
 (defun projectile-cmake--set-install-cmd(&optional evaluate)
@@ -766,15 +761,16 @@ Example:
                             " --target install"
                             )))
 
-      (add-dir-local-variable nil 'projectile-project-install-cmd value)
+      (save-current-buffer
+            (add-dir-local-variable nil 'projectile-project-install-cmd value)
 
-      (when projectile-install-cmd-map
-        (puthash default-directory value projectile-install-cmd-map))
+          (when projectile-install-cmd-map
+            (puthash default-directory value projectile-install-cmd-map))
 
-      (unless evaluate
-        (save-buffer)
-        (kill-buffer)
-        (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory)))))
+          (unless evaluate
+            (save-buffer)
+            (kill-buffer)
+            (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory))))))
 
 
 (defun projectile-cmake--set-package-cmd(&optional evaluate)
@@ -814,15 +810,16 @@ Example:
                             " --target package"
                             )))
 
-      (add-dir-local-variable nil 'projectile-project-package-cmd value)
+      (save-current-buffer
+          (add-dir-local-variable nil 'projectile-project-package-cmd value)
 
-      (when projectile-package-cmd-map
-        (puthash default-directory value projectile-package-cmd-map))
+          (when projectile-package-cmd-map
+            (puthash default-directory value projectile-package-cmd-map))
 
-      (unless evaluate
-        (save-buffer)
-        (kill-buffer)
-        (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory)))))
+          (unless evaluate
+            (save-buffer)
+            (kill-buffer)
+            (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory))))))
 
 ;; ToDo...
 (defun projectile-cmake--set-test-cmd(&optional evaluate)
@@ -835,7 +832,7 @@ Example:
 
 (defun projectile-cmake--set-run-cmd(&optional evaluate)
   "Add run command variable to .dir-locals.el file."
-
+  (message "projectile-cmake--set-run-cmd 1 %s" (buffer-name))
   (when (projectile-cmake-valid-p)
     (let ((run-exe                         (projectile-cmake--get-run-generic-cmd))
           (run-debug-exe                   (projectile-cmake--get-run-debug-cmd))
@@ -846,8 +843,12 @@ Example:
           (run-in-build-dir                (projectile-cmake--get-run-in-build-dir))
           (build-dir                       (projectile-cmake-project-build-dir)))
 
+      (message "2 %s" run-exe)
+
       (when (and run-in-build-dir (not (eq run-exe nil)) (f-file? run-exe))
         (setq run-exe (f-join build-dir (f-filename run-exe))))
+
+      (message "2 %s" run-exe)
 
       (when (and (not (eq run-debug-exe nil))
                  (equal build-type "Debug")
@@ -879,64 +880,74 @@ Example:
         (when run-in-build-dir
           (setq run-minimal-size-release-exe (f-join build-dir (f-filename run-minimal-size-release-exe))))
         (when (f-exists? run-minimal-size-release-exe)
-          (setq run-exe run-minimal-size-release-exe))
-        )
+          (setq run-exe run-minimal-size-release-exe)))
 
-      (unless (f-exist? run-exe)
+      (message "3 %s" run-exe)
+
+      (unless (f-exists? run-exe)
+        (message "4 %s" run-exe)
         (setq run-exe nil))
 
-      (add-dir-local-variable nil 'projectile-project-run-cmd run-exe)
+      (message "5 %s" run-exe)
 
-      (unless evaluate
-        (save-buffer)
-        (kill-buffer)
-        (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory)))
+      (save-current-buffer
+        (add-dir-local-variable nil 'projectile-project-run-cmd run-exe)
+
+        (unless evaluate
+            (save-buffer)
+            (kill-buffer)
+                (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory))))
     ))
 
 
 (defun projectile-cmake--set-run-generic-cmd(value &optional evaluate)
   "Add generic run command variable to .dir-locals.el file."
-  (add-dir-local-variable nil 'projectile-cmake-run-generic-cmd value)
-  (unless evaluate
+  (save-current-buffer
+    (add-dir-local-variable nil 'projectile-cmake-project-run-generic-cmd value)
+    (unless evaluate
         (save-buffer)
         (kill-buffer)
-        (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory)))
+        (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory))))
 
 
 (defun projectile-cmake--set-run-debug-cmd(value &optional evaluate)
   "Add debug run command variable to .dir-locals.el file."
-  (add-dir-local-variable nil 'projectile-cmake-run-debug-cmd value)
-  (unless evaluate
+  (save-current-buffer
+    (add-dir-local-variable nil 'projectile-cmake-project-run-debug-cmd value)
+    (unless evaluate
         (save-buffer)
         (kill-buffer)
-        (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory)))
+        (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory))))
 
 
 (defun projectile-cmake--set-run-release-cmd(value &optional evaluate)
   "Add release run command variable to .dir-locals.el file."
-  (add-dir-local-variable nil 'projectile-cmake-run-release-cmd value)
-  (unless evaluate
+  (save-current-buffer
+    (add-dir-local-variable nil 'projectile-cmake-project-run-release-cmd value)
+    (unless evaluate
         (save-buffer)
         (kill-buffer)
-        (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory)))
+        (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory))))
 
 
 (defun projectile-cmake--set-run-release-with-debug-info-cmd(value &optional evaluate)
   "Add release with debug info run command variable to .dir-locals.el file."
-  (add-dir-local-variable nil 'projectile-cmake-run-release-with-debug-info-cmd value)
-  (unless evaluate
+  (save-current-buffer
+    (add-dir-local-variable nil 'projectile-cmake-project-run-release-with-debug-info-cmd value)
+    (unless evaluate
         (save-buffer)
         (kill-buffer)
-        (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory)))
+        (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory))))
 
 
 (defun projectile-cmake--set-run-minimal-size-release-cmd(value &optional evaluate)
   "Add minimal size release run command variable to .dir-locals.el file."
-  (add-dir-local-variable nil 'projectile-cmake-run-minimal-size-release-cmd value)
-  (unless evaluate
+  (save-current-buffer
+    (add-dir-local-variable nil 'projectile-cmake-project-run-minimal-size-release-cmd value)
+    (unless evaluate
         (save-buffer)
         (kill-buffer)
-        (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory)))
+        (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory))))
 
 
 (defun projectile-cmake--set-all-commands(&optional evaluate)
@@ -948,12 +959,13 @@ Example:
   (projectile-cmake--set-test-cmd t)
   (projectile-cmake--set-run-cmd t)
 
-  (add-dir-local-variable nil 'projectile-cmake-project-initialized t)
+  (save-current-buffer
+    (add-dir-local-variable nil 'projectile-cmake-project-initialized t)
 
-  (unless evaluate
-    (save-buffer)
-    (kill-buffer)
-    (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory)))
+    (unless evaluate
+      (save-buffer)
+      (kill-buffer)
+      (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory))))
 
 (defun projectile-cmake-initialize ()
   "Initializes the .dir-locals.el variables."
@@ -1188,9 +1200,14 @@ The toolset feature is used only for Visual Studio generators."
 (defun projectile-cmake-select-run-file ()
     "Select the file that should be run for the project."
     (interactive)
+    (message "projectile-cmake-select-run-file 1 %s" (buffer-name))
     (when (projectile-cmake-valid-p)
+      (message "projectile-cmake-select-run-file 2 %s" (buffer-name))
       (let* (( result (projectile-cmake-find-file (projectile-cmake-project-build-dir)) ))
-        (projectile-cmake--set-run-generic-cmd result))))
+        (message "projectile-cmake-select-run-file 3 %s" (buffer-name))
+        (projectile-cmake--set-run-generic-cmd result t)
+        (message "projectile-cmake-select-run-file 4 %s" (buffer-name))
+        (projectile-cmake--set-run-cmd))))
 
 
 (defun projectile-cmake-select-run-file-debug ()
@@ -1198,7 +1215,8 @@ The toolset feature is used only for Visual Studio generators."
     (interactive)
     (when (projectile-cmake-valid-p)
       (let* (( result (projectile-cmake-find-file (projectile-cmake-project-build-dir)) ))
-        (projectile-cmake--set-run-debug-cmd result))))
+        (projectile-cmake--set-run-debug-cmd result t)
+        (projectile-cmake--set-run-cmd))))
 
 
 (defun projectile-cmake-select-run-file-release ()
@@ -1206,7 +1224,8 @@ The toolset feature is used only for Visual Studio generators."
     (interactive)
     (when (projectile-cmake-valid-p)
       (let* (( result (projectile-cmake-find-file (projectile-cmake-project-build-dir)) ))
-        (projectile-cmake--set-run-release-cmd result))))
+        (projectile-cmake--set-run-release-cmd result t)
+        (projectile-cmake--set-run-cmd))))
 
 
 (defun projectile-cmake-select-run-file-release-with-debug-info ()
@@ -1214,7 +1233,8 @@ The toolset feature is used only for Visual Studio generators."
     (interactive)
     (when (projectile-cmake-valid-p)
       (let* (( result (projectile-cmake-find-file (projectile-cmake-project-build-dir)) ))
-        (projectile-cmake--set-run-release-with-debug-info-cmd result))))
+        (projectile-cmake--set-run-release-with-debug-info-cmd result t)
+        (projectile-cmake--set-run-cmd))))
 
 
 (defun projectile-cmake-select-run-file-minimal-size-release ()
@@ -1222,7 +1242,8 @@ The toolset feature is used only for Visual Studio generators."
     (interactive)
     (when (projectile-cmake-valid-p)
       (let* (( result (projectile-cmake-find-file (projectile-cmake-project-build-dir)) ))
-        (projectile-cmake--set-run-minimal-size-release-cmd result))))
+        (projectile-cmake--set-run-minimal-size-release-cmd result t)
+        (projectile-cmake--set-run-cmd))))
 
 
 (defun projectile-cmake-toggle-run-in-build-dir ()
