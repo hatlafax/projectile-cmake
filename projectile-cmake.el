@@ -832,7 +832,6 @@ Example:
 
 (defun projectile-cmake--set-run-cmd(&optional evaluate)
   "Add run command variable to .dir-locals.el file."
-  (message "projectile-cmake--set-run-cmd 1 %s" (buffer-name))
   (when (projectile-cmake-valid-p)
     (let ((run-exe                         (projectile-cmake--get-run-generic-cmd))
           (run-debug-exe                   (projectile-cmake--get-run-debug-cmd))
@@ -843,12 +842,8 @@ Example:
           (run-in-build-dir                (projectile-cmake--get-run-in-build-dir))
           (build-dir                       (projectile-cmake-project-build-dir)))
 
-      (message "2 %s" run-exe)
-
       (when (and run-in-build-dir (not (eq run-exe nil)) (f-file? run-exe))
         (setq run-exe (f-join build-dir (f-filename run-exe))))
-
-      (message "2 %s" run-exe)
 
       (when (and (not (eq run-debug-exe nil))
                  (equal build-type "Debug")
@@ -882,13 +877,8 @@ Example:
         (when (f-exists? run-minimal-size-release-exe)
           (setq run-exe run-minimal-size-release-exe)))
 
-      (message "3 %s" run-exe)
-
       (unless (f-exists? run-exe)
-        (message "4 %s" run-exe)
         (setq run-exe nil))
-
-      (message "5 %s" run-exe)
 
       (save-current-buffer
         (add-dir-local-variable nil 'projectile-project-run-cmd run-exe)
@@ -1200,13 +1190,9 @@ The toolset feature is used only for Visual Studio generators."
 (defun projectile-cmake-select-run-file ()
     "Select the file that should be run for the project."
     (interactive)
-    (message "projectile-cmake-select-run-file 1 %s" (buffer-name))
     (when (projectile-cmake-valid-p)
-      (message "projectile-cmake-select-run-file 2 %s" (buffer-name))
       (let* (( result (projectile-cmake-find-file (projectile-cmake-project-build-dir)) ))
-        (message "projectile-cmake-select-run-file 3 %s" (buffer-name))
         (projectile-cmake--set-run-generic-cmd result t)
-        (message "projectile-cmake-select-run-file 4 %s" (buffer-name))
         (projectile-cmake--set-run-cmd))))
 
 
