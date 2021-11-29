@@ -881,14 +881,15 @@ Example:
         (unless (f-exists? run-exe)
           (setq run-exe nil)))
 
-      (save-current-buffer
-        (add-dir-local-variable nil 'projectile-project-run-cmd run-exe)
+      (unless (eq run-exe nil)
+        (save-current-buffer
+          (add-dir-local-variable nil 'projectile-project-run-cmd run-exe)
 
-        (unless evaluate
-            (save-buffer)
-            (kill-buffer)
-                (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory))))
-    ))
+          (unless evaluate
+              (save-buffer)
+              (kill-buffer)
+              (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory))))
+    )))
 
 
 (defun projectile-cmake--set-run-generic-cmd(value &optional evaluate)
