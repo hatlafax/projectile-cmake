@@ -357,6 +357,7 @@ This function simply delegates to ivy-read."
 The user will be prompted to choose a directory starting with `directory-to-start-in'"
   (let* ((ivy-read-prompt "Choose directory: ")
          (counsel--find-file-predicate #'file-directory-p)
+         (ivy-magic-slash-non-match-action #'ivy-magic-slash-non-match-create)
          (default-directory directory-to-start-in)
          (selected-directory
           (ivy-read
