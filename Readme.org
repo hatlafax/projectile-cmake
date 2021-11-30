@@ -49,6 +49,8 @@ which the author has bound to =C-c C-p=. E.g. the first command can be started b
 
 | key binding | command                                                  | description                                                                                                                                          |
 |-------------+----------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------|
+| s C         | projectile-cmake-select-configuration                    | Select the cmake configuration data. Convenient function that calls the other /select/ functions.                                                    |
+|-------------+----------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------|
 | s d         | projectile-cmake-select-build-dir                        | Choose the build directory root for the project.                                                                                                     |
 | s t         | projectile-cmake-select-build-type                       | Choose between *Debug*, *Release*, *RelWithDebInfo* and *MinSizeRel*.                                                                                |
 | s g         | projectile-cmake-select-generator                        | Choose a valid CMake generator: *MinGW Makefiles*, *Ninja*, *Visual Studio 16 2019*, ...                                                             |
@@ -73,7 +75,7 @@ file.
 - =M-x projectile-cmake-select-generator=
 - =M-x projectile-cmake-select-architecture=
 - =M-x projectile-cmake-select-toolset=
-- =M-x projectile-cmake-select-toolchain=.
+- =M-x projectile-cmake-select-toolchain=
 
 Additionally, a file that should be executed for the project can be defined by the following commands:
 - =M-x projectile-cmake-select-run-file=
@@ -81,6 +83,15 @@ Additionally, a file that should be executed for the project can be defined by t
 - =M-x projectile-cmake-select-run-file-release=
 - =M-x projectile-cmake-select-run-file-release-with-debug-info=
 - =M-x projectile-cmake-select-run-file-minimal-size-release=
+
+The command =M-x projectile-cmake-select-configuration= allows to conveniently execute the following commands one after another:
+- =M-x projectile-cmake-select-build-dir=
+- =M-x projectile-cmake-select-build-type=
+- =M-x projectile-cmake-select-generator=
+- =M-x projectile-cmake-select-architecture=
+- =M-x projectile-cmake-select-toolset=
+- =M-x projectile-cmake-select-toolchain=
+- =M-x projectile-cmake-select-run-file=
 
 If the bool variable =projectile-cmake-project-run-in-build-dir= is set to *t*, the run command takes only the filename of the
 path set by =M-x projectile-cmake-select-run-file= and concat it with the current configuration build directory.
@@ -110,7 +121,7 @@ This file should have the following examplified  layout:
 
 #+end_src
 
-Only the key =configure-flags= is currently taken into account. The value if this key is a list of string entries.
+Only the key =configure-flags= are currently taken into account. The value if this key is a list of string entries.
 These entries are all concatenated with a separating space character and finally added to the CMake configuration
 command line. Command =projectile-cmake-reinitialize= is probably to be called after adding or changing the file
 =.projectile-cmake=.
