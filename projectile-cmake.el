@@ -122,7 +122,7 @@ The other generators always target the x64 platform."
   :type 'string)
 
 
-(defcustom projectile-cmake-default-toolset "v120"
+(defcustom projectile-cmake-default-toolset "v142"
   "The default CMake toolset.
 The following toolsets are supported:
 
@@ -134,6 +134,7 @@ The following toolsets are supported:
   from Visual Studio 14 2015  : v140 v140_clang v140_clang_c2 v140_xp
   from Visual Studio 15 2017  : v141 v141_clang v141_clang_c2 v141_xp
   from Visual Studio 16 2019  : v142 v142_clang v142_clang_c2 v142_xp
+  from Visual Studio 16 2022  : v143 v143_clang v143_clang_c2 v143_xp
 
 The toolset is only applied for the MS Visual Studio generators."
   :group 'projectile-cmake
@@ -143,6 +144,7 @@ The toolset is only applied for the MS Visual Studio generators."
 (defcustom projectile-cmake-default-generator "MinGW Makefiles"
   "The default CMake generator.
 The follwing generators are supported:
+    Visual Studio 17 2022
     Visual Studio 16 2019
     Visual Studio 15 2017
     Visual Studio 14 2015
@@ -238,7 +240,10 @@ If nil the executable defined by `projectile-cmake-project-run-cmd' is taken ver
 
 
 (defvar projectile-cmake-project-run-generic-cmd nil
-  "The project's debug run command.")
+  "The project's generic run command.
+
+This command is used in case that no dedicated debug, release, ... commands are
+specified. I.e. it is a fallback variable.")
 
 
 (defvar projectile-cmake-project-run-debug-cmd nil
@@ -1076,7 +1081,7 @@ Remark: Configuration automatically does take place in a project specific sub di
 
 
 (defun projectile-cmake-select-generator ()
-  "Select the current project ; commentnfiguration generator"
+  "Select the current project ; configuration generator"
   (interactive)
   (when (projectile-cmake-valid-p)
     (let* (( result (projectile-cmake-select-from-item-list
@@ -1234,6 +1239,30 @@ The toolset feature is used only for Visual Studio generators."
         (projectile-cmake--set-run-minimal-size-release-cmd result t)
         (projectile-cmake--set-run-cmd))))
 
+
+(defun projectile-cmake-select-configuration ()
+  "Select the cmake configuration data.
+
+This convenience function just calls the other select functions, i.e.:
+    - projectile-cmake-select-build-dir
+    - projectile-cmake-select-build-type
+    - projectile-cmake-select-generator
+    - projectile-cmake-select-architecture
+    - projectile-cmake-select-toolset
+    - projectile-cmake-select-toolchain
+    - projectile-cmake-select-run-file
+"
+  (interactive)
+  (when (projectile-cmake-valid-p)
+    (projectile-cmake-select-build-dir)
+    (projectile-cmake-select-build-type)
+    (projectile-cmake-select-generator)
+    (projectile-cmake-select-architecture)
+    (projectile-cmake-select-toolset)
+    (projectile-cmake-select-toolchain)
+    (projectile-cmake-select-run-file)
+    )
+)
 
 (defun projectile-cmake-toggle-run-in-build-dir ()
   "Toggle the run in build directory flag variable.
