@@ -1200,7 +1200,7 @@ The toolset feature is used only for Visual Studio generators."
     (interactive)
     (when (projectile-cmake-valid-p)
       (let* (( result (projectile-cmake-find-file (projectile-cmake-project-build-dir)) ))
-        (projectile-cmake--set-run-generic-cmd result t)
+        (projectile-cmake--set-run-generic-cmd result)
         (projectile-cmake--set-run-cmd))))
 
 
@@ -1209,7 +1209,7 @@ The toolset feature is used only for Visual Studio generators."
     (interactive)
     (when (projectile-cmake-valid-p)
       (let* (( result (projectile-cmake-find-file (projectile-cmake-project-build-dir)) ))
-        (projectile-cmake--set-run-debug-cmd result t)
+        (projectile-cmake--set-run-debug-cmd result)
         (projectile-cmake--set-run-cmd))))
 
 
@@ -1218,7 +1218,7 @@ The toolset feature is used only for Visual Studio generators."
     (interactive)
     (when (projectile-cmake-valid-p)
       (let* (( result (projectile-cmake-find-file (projectile-cmake-project-build-dir)) ))
-        (projectile-cmake--set-run-release-cmd result t)
+        (projectile-cmake--set-run-release-cmd result)
         (projectile-cmake--set-run-cmd))))
 
 
@@ -1227,7 +1227,7 @@ The toolset feature is used only for Visual Studio generators."
     (interactive)
     (when (projectile-cmake-valid-p)
       (let* (( result (projectile-cmake-find-file (projectile-cmake-project-build-dir)) ))
-        (projectile-cmake--set-run-release-with-debug-info-cmd result t)
+        (projectile-cmake--set-run-release-with-debug-info-cmd result)
         (projectile-cmake--set-run-cmd))))
 
 
@@ -1236,7 +1236,7 @@ The toolset feature is used only for Visual Studio generators."
     (interactive)
     (when (projectile-cmake-valid-p)
       (let* (( result (projectile-cmake-find-file (projectile-cmake-project-build-dir)) ))
-        (projectile-cmake--set-run-minimal-size-release-cmd result t)
+        (projectile-cmake--set-run-minimal-size-release-cmd result)
         (projectile-cmake--set-run-cmd))))
 
 
