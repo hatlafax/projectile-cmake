@@ -1281,6 +1281,7 @@ If this variable is nil the run executable path is taken verbatim."
 
 (defvar projectile-cmake-command-map
   (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "s C") #'projectile-cmake-select-configuration)
     (define-key map (kbd "s d") #'projectile-cmake-select-build-dir)
     (define-key map (kbd "s t") #'projectile-cmake-select-build-type)
     (define-key map (kbd "s g") #'projectile-cmake-select-generator)
@@ -1351,6 +1352,8 @@ If this variable is nil the run executable path is taken verbatim."
 "
 ^^^^Projectile CMake
 ^^^^--------------------------------------------------------------------------------
+_sC_: select cmake configuration at once.
+^^^^--------------------------------------------------------------------------------
 _sd_: select build directory         | _srg_: select run file
 _st_: select build type              | _srd_: select run file debug
 _sg_: select generator               | _srr_: select run file release
@@ -1361,6 +1364,7 @@ _sc_: select toolchain               |
 _td_: toggle: Run in build directory | _q_: quit
 _er_; reinitialize
 "
+    ("sC" projectile-cmake-select-configuration)
     ("sd" projectile-cmake-select-build-dir)
     ("st" projectile-cmake-select-build-type)
     ("sg" projectile-cmake-select-generator)
