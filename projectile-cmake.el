@@ -848,53 +848,60 @@ Example:
           (run-in-build-dir                (projectile-cmake--get-run-in-build-dir))
           (build-dir                       (projectile-cmake-project-build-dir)))
 
-      (when (and run-in-build-dir (not (eq run-exe nil)) (f-file? run-exe))
+      (when (and run-in-build-dir 
+                 (not (eq run-exe nil)) 
+            )
         (setq run-exe (f-join build-dir (f-filename run-exe))))
 
       (when (and (not (eq run-debug-exe nil))
                  (equal build-type "Debug")
-                 (f-file? run-debug-exe))
+            )
         (when run-in-build-dir
           (setq run-debug-exe (f-join build-dir (f-filename run-debug-exe))))
-        (when (f-exists? run-debug-exe)
-          (setq run-exe run-debug-exe)))
+
+        (setq run-exe run-debug-exe)
+      )
 
       (when (and (not (eq run-release-exe nil))
                  (equal build-type "Release")
-                 (f-file? run-release-exe))
+            )
         (when run-in-build-dir
           (setq run-release-exe (f-join build-dir (f-filename run-release-exe))))
-        (when (f-exists? run-release-exe)
-          (setq run-exe run-release-exe)))
+
+        (setq run-exe run-release-exe)
+      )
 
       (when (and (not (eq run-release-with-debug-info-exe nil))
                  (equal build-type "RelWithDebInfo")
-                 (f-file? run-release-with-debug-info-exe))
+            )
         (when run-in-build-dir
           (setq run-release-with-debug-info-exe (f-join build-dir (f-filename run-release-with-debug-info-exe))))
-        (when (f-exists? run-release-with-debug-info-exe)
-          (setq run-exe run-release-with-debug-info-exe)))
+
+        (setq run-exe run-release-with-debug-info-exe)
+      )
 
       (when (and (not (eq run-minimal-size-release-exe nil))
                  (equal build-type "MinSizeRel")
-                 (f-file? run-minimal-size-release-exe))
+            )
         (when run-in-build-dir
           (setq run-minimal-size-release-exe (f-join build-dir (f-filename run-minimal-size-release-exe))))
-        (when (f-exists? run-minimal-size-release-exe)
-          (setq run-exe run-minimal-size-release-exe)))
 
-      (unless (eq run-exe nil)
-        (unless (f-exists? run-exe)
-          (setq run-exe nil)))
+        (setq run-exe run-minimal-size-release-exe)
+      )
 
       (unless (eq run-exe nil)
         (save-current-buffer
+
           (add-dir-local-variable nil 'projectile-project-run-cmd run-exe)
 
           (unless evaluate
               (save-buffer)
               (kill-buffer)
-              (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory))))
+
+              (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory)
+          )
+        )
+      )
     )))
 
 
