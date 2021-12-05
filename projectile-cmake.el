@@ -972,6 +972,10 @@ Example:
       (kill-buffer)
       (projectile-cmake-dir-locals-reload-for-all-buffer-in-this-directory))))
 
+;;
+;; Interactive
+;;
+
 (defun projectile-cmake-initialize ()
   "Initializes the .dir-locals.el variables."
   (interactive)
@@ -1020,10 +1024,6 @@ JSON file was added or modified, running this command is necessary."
   )
 )
 
-
-;;
-;; Interactive
-;;
 
 (defun projectile-cmake-project-build-dir ()
   "The project build directory."
@@ -1258,6 +1258,9 @@ This convenience function just calls the other select functions, i.e.:
     - projectile-cmake-select-toolset
     - projectile-cmake-select-toolchain
     - projectile-cmake-select-run-file
+
+Additionally, it tries to create the 'launch.json' and the 'dap-register-debug-template'
+files.
 "
   (interactive)
   (when (projectile-cmake-valid-p)
@@ -1268,7 +1271,10 @@ This convenience function just calls the other select functions, i.e.:
     (projectile-cmake-select-toolset)
     (projectile-cmake-select-toolchain)
     (projectile-cmake-select-run-file)
-    )
+
+    (projectile-cmake-cppdbg-create-launch-json)
+    (projectile-cmake-cppdbg-create-dap-register-debug-template)
+  )
 )
 
 (defun projectile-cmake-toggle-run-in-build-dir ()
@@ -1281,6 +1287,106 @@ If this variable is nil the run executable path is taken verbatim."
       (projectile-cmake--set-run-in-build-dir flag)
       (projectile-cmake--set-run-cmd)
       )))
+
+
+(defun projectile-cmake-cppdbg-create-launch-json ()
+    "Create a minimal 'launch.json' file for cppdbg in dap-mode.
+
+An existing 'launch.json' file is renamed to 'launch.json~'.
+An existing 'launch.json~' is silently overriden."
+    (interactive)
+    (when (projectile-cmake-valid-p)
+        (when (projectile-project-p)
+            (projectile-with-default-dir
+                (if (projectile-project-p)
+                    (projectile-project-root) default-directory)
+
+                (let* ((root (projectile-project-root))
+                       (file  (concat root "launch.json"))
+                       (file~ (concat file "~")))
+                    (when (file-exists-p file)
+                        (rename-file file file~ t))
+
+                    (when (eq projectile-project-run-cmd nil)
+                              (projectile-cmake--set-run-cmd))
+
+                    (unless (eq projectile-project-run-cmd nil)
+                        (let* ((name (file-name-nondirectory (directory-file-name (file-name-directory root))))
+                               (cmd  (file-relative-name projectile-project-run-cmd root)))
+                            (with-temp-buffer (insert         "{\n")
+                                              (insert         "    \"version\": \"0.1.0\",\n")
+                                              (insert         "    \"configurations\": [\n")
+                                              (insert         "        {\n")
+                                              (insert (format "            \"name\": \"Debug: %s\",\n" name))
+                                              (insert         "            \"type\": \"cppdbg\",\n")
+                                              (insert         "            \"request\": \"launch\",\n")
+                                              (insert (format "            \"program\": \"${workspaceFolder}/%s\",\n" cmd))
+                                              (insert         "            \"args\": [],\n")
+                                              (insert         "            \"stopAtEntry\": false,\n")
+                                              (insert         "            \"cwd\": \"${workspaceFolder}\",\n")
+                                              (insert         "            \"environment\": [],\n")
+                                              (insert         "            \"externalConsole\": true,\n")
+                                              (insert         "            \"MIMode\": \"gdb\"\n")
+                                              (insert         "        }\n")
+                                              (insert         "    ]\n")
+                                              (insert         "}\n")
+                                              (write-region (point-min)
+                                                            (point-max) file t))
+                        )
+                    )
+                )
+            )
+        )
+    )
+)
+
+
+(defun projectile-cmake-cppdbg-create-dap-register-debug-template ()
+    "Create a minimal 'dap-register-debug-template.el' file for cppdbg in dap-mode.
+
+An existing 'dap-register-debug-template.el' file is renamed to 'dap-register-debug-template.el~'.
+An existing 'dap-register-debug-template.el~' is silently overriden."
+    (interactive)
+    (when (projectile-cmake-valid-p)
+        (when (projectile-project-p)
+            (projectile-with-default-dir
+                (if (projectile-project-p)
+                    (projectile-project-root) default-directory)
+
+                (let* ((root (projectile-project-root))
+                       (file  (concat root "dap-register-debug-template.el"))
+                       (file~ (concat file "~")))
+                    (when (file-exists-p file)
+                        (rename-file file file~ t))
+
+                    (when (eq projectile-project-run-cmd nil)
+                              (projectile-cmake--set-run-cmd))
+
+                    (unless (eq projectile-project-run-cmd nil)
+                        (let* ((name (file-name-nondirectory (directory-file-name (file-name-directory root))))
+                               (cmd  (file-relative-name projectile-project-run-cmd root)))
+                            (with-temp-buffer (insert         ";; Eval Buffer with `M-x eval-buffer' to register the newly created template.\n")
+                                              (insert         "(dap-register-debug-template\n")
+                                              (insert (format "    \"Debug: %s\"\n" name))
+                                              (insert         "    (list :type \"cppdbg\"\n")
+                                              (insert         "          :request \"launch\"\n")
+                                              (insert (format "          :name \"Debug: %s\"\n" name))
+                                              (insert         "          :MIMode \"gdb\"\n")
+                                              (insert (format "          :program \"${workspaceFolder}/%s\"\n" cmd))
+                                              (insert         "          :args \"\"\n")
+                                              (insert         "          :cwd \"${workspaceFolder}\"\n")
+                                              (insert         "          :environment: \"\"\n")
+                                              (insert         "          :stopAtEntry nil\n")
+                                              (insert         "          :externalConsole t))\n")
+                                              (write-region (point-min)
+                                                            (point-max) file t))
+                        )
+                    )
+                )
+            )
+        )
+    )
+)
 
 ;;
 ;; --
