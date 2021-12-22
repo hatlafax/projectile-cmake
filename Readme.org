@@ -17,7 +17,7 @@ use the package if it pleases you, but don't blame me for its short commings :-)
 
 * Installation
 
-This package is not available on MELPA. Just copy file =projectile.el= into your load path.
+This package is not available on MELPA. Just copy file =projectile-cmake.el= into your load path.
 
 * Usage
 
